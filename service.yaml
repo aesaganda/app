@@ -7,6 +7,6 @@ spec:
     app: spring-boot-k8s
   ports:
     - protocol: "TCP"
-      port: 9001 The port that the service is running on in the cluster
+      port: 9001 # The port that the service is running on in the cluster
       targetPort: 33001 # The port exposed by the service
   type: NodePort # type of the service.
