@@ -1,30 +1,34 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.9.0'
-            args '-v /root/.m2:/root/.m2'
-        }
-    }
+    agent any
+
     stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/your-username/your-repo.git'
+            }
+        }
+
         stage('Build') {
             steps {
-                sh 'mvn -B -DskipTests clean package'
+                sh './mvnw package'
             }
         }
-        stage('Test') {
+
+        stage('Run') {
             steps {
-                sh 'mvn test'
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
-                }
+                sh 'nohup java -jar ./target/app-0.0.1-SNAPSHOT.jar &'
             }
         }
-        stage('Deliver') {
-            steps {
-                sh './jenkins/scripts/deliver.sh'
-            }
+    }
+
+    post {
+        always {
+            sh 'curl http://localhost:9001/api/foos?val=TEST'
+        }
+        failure {
+            mail to: 'team@example.com',
+                 subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
+                 body: "Something is wrong with ${env.BUILD_URL}"
         }
     }
 }
