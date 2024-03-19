@@ -7,12 +7,6 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/aesaganda/app.git'
-            }
-        }
-
         stage('Build') {
             steps {
                 sh './mvnw package'
