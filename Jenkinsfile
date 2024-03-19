@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'maven:3.9.0'
+            args '-v /root/.m2:/root/.m2'
+        }
+    }
 
     stages {
         stage('Checkout') {
@@ -18,17 +23,6 @@ pipeline {
             steps {
                 sh 'nohup java -jar ./target/app-0.0.1-SNAPSHOT.jar &'
             }
-        }
-    }
-
-    post {
-        always {
-            sh 'curl http://localhost:9001/api/foos?val=TEST'
-        }
-        failure {
-            mail to: 'team@example.com',
-                 subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
-                 body: "Something is wrong with ${env.BUILD_URL}"
         }
     }
 }
