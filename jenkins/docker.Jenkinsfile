@@ -2,7 +2,7 @@ pipeline {
 
     environment { 
         registry = "aesaganda/jenkins-docker" 
-        registryCredential = 'jenkinsCredentialId' // Use Jenkins credential ID
+        registryCredential = '6c49e5ac-fce3-4b50-a936-90e0b03fddd3' // Use Jenkins credential ID
     }
     agent any 
     stages { 
@@ -22,7 +22,7 @@ pipeline {
         stage('Deploy our image') { 
             steps {
                 script {
-                    docker.withRegistry('https://your.docker.registry', registryCredential ) { 
+                    docker.withRegistry('https://docker.io', registryCredential ) { 
                         dockerImage.push() 
                     }
                 }
