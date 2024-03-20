@@ -2,8 +2,7 @@ pipeline {
 
     environment { 
         registry = "aesaganda/jenkins-docker" 
-        registryCredential = '6c49e5ac-fce3-4b50-a936-90e0b03fddd3' 
-        dockerImage = '' 
+        registryCredential = 'jenkinsCredentialId' // Use Jenkins credential ID
     }
     agent any 
     stages { 
@@ -13,18 +12,26 @@ pipeline {
             }
         } 
         stage('Building our image') { 
+            steps {
                 script { 
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER" 
+                    def dockerImage = docker.build "${registry}:${env.BUILD_NUMBER}" 
                 }
-            } 
+            }
+        } 
         
         stage('Deploy our image') { 
-                    docker.withRegistry( '', registryCredential ) { 
+            steps {
+                script {
+                    docker.withRegistry('https://your.docker.registry', registryCredential ) { 
                         dockerImage.push() 
                     }
-                } 
+                }
+            }
+        } 
         stage('Cleaning up') { 
-                sh "docker rmi $registry:$BUILD_NUMBER" 
+            steps {
+                sh "docker rmi ${registry}:${env.BUILD_NUMBER}" 
+            }
         }
     }
 }
